@@ -9,13 +9,22 @@ class User
         $this->conn = $db;
     }
 
-    public function createUser($nama, $email, $password)
+    public function createUser($name, $email, $password)
     {
-        $query = "INSERT INTO users (nama, email, password) VALUES (?, ?, ?)";
+        $query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        return $stmt->execute([$nama, $email, $hashedPassword]);
+        return $stmt->execute([$name, $email, $hashedPassword]);
     }
+
+    public function findByEmail($email)
+    {
+        $query = "SELECT * FROM users WHERE email = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 }

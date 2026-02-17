@@ -25,4 +25,46 @@ class AuthController extends Controller
 
         $this->json(["message" => "User created"]);
     }
+
+    public function login()
+    {
+        $db = new Database();
+        $conn = $db->getConnection();
+
+        $userModel = new User($conn);
+
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        if (!$email || !$password) {
+            $this->json(["message" => "Email dan password wajib diisi"], 400);
+        }
+
+        $user = $userModel->findByEmail($email);
+
+        var_dump(password_verify($password, $user['password']));
+exit;
+
+
+
+
+        if (!$user) {
+            $this->json(["message" => "User tidak ditemukan"], 404);
+        }
+        
+
+        if (!password_verify($password, $user['password'])) {
+            $this->json(["message" => "Password salah"], 401);
+        }
+
+        $this->json([
+            "message" => "Login berhasil",
+            "user" => [
+                "id" => $user["id"],
+                "name" => $user["name"],
+                "email" => $user["email"]
+            ]
+        ]);
+    }
+
 }
