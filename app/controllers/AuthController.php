@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         public function login()
     {
-        session_start();
+
     
         $db = new Database();
         $conn = $db->getConnection();
@@ -63,6 +63,19 @@ class AuthController extends Controller
             "user" => $_SESSION['user']
         ]);
     }
+
+        public function logout()
+    {
+        session_start();
+    
+        session_unset();
+        session_destroy();
+    
+        $this->json([
+            "message" => "Logout berhasil"
+        ]);
+    }
+
 
 
 }

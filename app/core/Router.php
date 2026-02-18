@@ -17,27 +17,27 @@ class Router
     public function run()
     {
         $method = $_SERVER['REQUEST_METHOD'];
-    $url = $_GET['url'] ?? '/';
-
-    if (isset($this->routes[$method][$url])) {
-
-        $callback = $this->routes[$method][$url];
-
-        if (is_string($callback)) {
-
-            list($controller, $action) = explode('@', $callback);
-
-            require_once "../app/controllers/$controller.php";
-
-            $controller = new $controller();
-            $controller->$action();
-
+        $url = $_GET['url'] ?? '/';
+    
+        if (isset($this->routes[$method][$url])) {
+    
+            $callback = $this->routes[$method][$url];
+    
+            if (is_string($callback)) {
+    
+                list($controller, $action) = explode('@', $callback);
+    
+                require_once "../app/controllers/$controller.php";
+    
+                $controller = new $controller();
+                $controller->$action();
+    
+            } else {
+                call_user_func($callback);
+            }
+    
         } else {
-            call_user_func($callback);
+            echo "Route tidak ditemukan";
         }
-
-    } else {
-        echo "Route tidak ditemukan";
-    }
     }
 }
