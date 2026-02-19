@@ -7,8 +7,7 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        AuthMiddleware::check();
-
-        $this->json($_SESSION['user']);
+        $this->view('profile/index');
     }
 }
+

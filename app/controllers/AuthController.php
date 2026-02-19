@@ -58,15 +58,13 @@ class AuthController extends Controller
             "email" => $user["email"]
         ];
     
-        $this->json([
-            "message" => "Login berhasil",
-            "user" => $_SESSION['user']
-        ]);
+        header("Location: index.php?url=profile");
+        exit;
+
     }
 
         public function logout()
     {
-        session_start();
     
         session_unset();
         session_destroy();

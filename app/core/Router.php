@@ -4,40 +4,53 @@ class Router
 {
     private $routes = [];
 
-    public function get($path, $callback)
+        public function get($url, $action, $middleware = [])
     {
-        $this->routes['GET'][$path] = $callback;
+        $this->routes['GET'][$url] = [
+            'action' => $action,
+            'middleware' => $middleware
+        ];
     }
 
-    public function post($path, $callback)
+    public function post($url, $action, $middleware = [])
     {
-        $this->routes['POST'][$path] = $callback;
-    }
+        $this->routes['POST'][$url] = [
+            'action' => $action,
+            'middleware' => $middleware
+        ];
+        }
 
-    public function run()
+
+        public function run()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         $url = $_GET['url'] ?? '/';
-    
-        if (isset($this->routes[$method][$url])) {
-    
-            $callback = $this->routes[$method][$url];
-    
-            if (is_string($callback)) {
-    
-                list($controller, $action) = explode('@', $callback);
-    
-                require_once "../app/controllers/$controller.php";
-    
-                $controller = new $controller();
-                $controller->$action();
-    
-            } else {
-                call_user_func($callback);
-            }
-    
-        } else {
+
+        $route = $this->routes[$method][$url] ?? null;
+
+        if (!$route) {
             echo "Route tidak ditemukan";
+            return;
         }
+
+        if (!empty($route['middleware'])) {
+            foreach ($route['middleware'] as $mw) {
+                $className = ucfirst($mw) . 'Middleware';
+
+                require_once "../app/middleware/$className.php";
+
+                $middleware = new $className();
+                $middleware->handle();
+            }
+        }
+
+
+        list($controller, $action) = explode('@', $route['action']);
+
+        require_once "../app/controllers/$controller.php";
+
+        $controller = new $controller();
+        $controller->$action();
     }
+
 }
