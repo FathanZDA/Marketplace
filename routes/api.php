@@ -11,3 +11,6 @@ $router->get('auth/logout', 'AuthController@logout');
 
 $router->get('products', 'ProductController@index', ['auth']);
 $router->post('products', 'ProductController@store', ['auth']);
+
+$router->post('products/update', 'ProductController@update', ['auth']);
+$router->post('products/delete', 'ProductController@delete', ['auth']);
